@@ -9,7 +9,7 @@ DATATABLES_PATHS=(
     "'datatables.net-buttons-bootstrap':'js/vendor/datatables/buttons.bootstrap.min',"
 )
 
-GITHUBREPO="https://github.com/mooseable"
+GITHUBREPO="https://github.com/kazoo-classic"
 
 MAIN_JS="$(pwd)/src/js/main.js"
 # Function to add a line to the paths object if it doesn't already exist
@@ -41,15 +41,15 @@ if [[ "$1" == 'allapps' ]]; then
 
     echo "adding resources app"
     #resources
-    mkdir -p $(pwd)/tmp/src
-    git clone $GITHUBREPO/monster-ui-resources.git $(pwd)/tmp/src
+    mkdir -p $(pwd)/tmp/src/apps/resources
+    git clone $GITHUBREPO/monster-ui-resources.git $(pwd)/tmp/src/apps/resources
     /bin/cp -rf $(pwd)/tmp/src $(pwd)/
     rm -rf $(pwd)/tmp
 
     echo "adding rates app"
     #rates
-    mkdir -p $(pwd)/tmp/src
-    git clone $GITHUBREPO/monster-ui-rates.git $(pwd)/tmp/src
+    mkdir -p $(pwd)/tmp/src/apps/rates
+    git clone $GITHUBREPO/monster-ui-rates.git $(pwd)/tmp/src/apps/rates
     /bin/cp -rf $(pwd)/tmp/src $(pwd)/
     rm -rf $(pwd)/tmp
 
@@ -84,8 +84,71 @@ if [[ "$1" == 'allapps' ]]; then
 
     echo "adding registrations app"
     #registrations
-    mkdir -p $(pwd)/tmp/src
-    git clone $GITHUBREPO/monster-ui-registrations.git $(pwd)/tmp/src
+    mkdir -p $(pwd)/tmp/src/apps/registrations
+    git clone $GITHUBREPO/monster-ui-registrations.git $(pwd)/tmp/src/apps/registrations
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding voicemails app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/voicemails
+    git clone $GITHUBREPO/monster-ui-voicemails.git $(pwd)/tmp/src/apps/voicemails
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding recordings app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/recordings
+    git clone $GITHUBREPO/monster-ui-recordings.git $(pwd)/tmp/src/apps/recordings
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding SmartPBX app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/voip
+    git clone $GITHUBREPO/monster-ui-voip.git $(pwd)/tmp/src/apps/voip
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding Accounts app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/accounts
+    git clone $GITHUBREPO/monster-ui-accounts.git $(pwd)/tmp/src/apps/accounts
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding CSV-Onboarding app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/csv-onboarding
+    git clone $GITHUBREPO/monster-ui-csv-onboarding.git $(pwd)/tmp/src/apps/csv-onboarding
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding Fax app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/fax
+    git clone $GITHUBREPO/monster-ui-fax.git $(pwd)/tmp/src/apps/fax
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding Numbers app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/numbers
+    git clone $GITHUBREPO/monster-ui-numbers.git $(pwd)/tmp/src/apps/numbers
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding PBXs app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/pbxs
+    git clone $GITHUBREPO/monster-ui-pbxs.git $(pwd)/tmp/src/apps/pbxs
+    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
+    rm -rf $(pwd)/tmp
+
+    echo "adding Webhooks app"
+    #registrations
+    mkdir -p $(pwd)/tmp/src/apps/webhooks
+    git clone $GITHUBREPO/monster-ui-webhooks.git $(pwd)/tmp/src/apps/webhooks
     /bin/cp -rf $(pwd)/tmp/src $(pwd)/
     rm -rf $(pwd)/tmp
 
