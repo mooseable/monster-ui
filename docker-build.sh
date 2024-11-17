@@ -10,7 +10,7 @@ DATATABLES_PATHS=(
     "'bootstraptour': 'js/vendor/bootstrap-tour.min',"
 )
 
-GITHUBREPO="https://github.com/kazoo-classic"
+GITHUBREPO="https://github.com/mooseable"
 
 MAIN_JS="$(pwd)/src/js/main.js"
 # Function to add a line to the paths object if it doesn't already exist
