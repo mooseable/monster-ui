@@ -7,6 +7,7 @@ DATATABLES_PATHS=(
     "'datatables.net-buttons': 'js/vendor/datatables/dataTables.buttons.min',"
     "'datatables.net-buttons-html5': 'js/vendor/datatables/buttons.html5.min',"
     "'datatables.net-buttons-bootstrap':'js/vendor/datatables/buttons.bootstrap.min',"
+    "'bootstraptour': 'js/vendor/bootstrap-tour.min',"
 )
 
 GITHUBREPO="https://github.com/kazoo-classic"
@@ -24,133 +25,93 @@ add_line_if_missing() {
     if ! grep -qF "$line" "$file"; then
         # Insert the line before the closing '}' of the paths object
         # Assumes that 'paths: {' and the closing '}' are properly formatted
-        sed -i "/paths\s*:\s*{/a \ \ \ \ \ \ \ \ $escaped_line" "$file"
+        sed -i "/paths\s*:\s*{/a \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ $escaped_line" "$file"
         echo "Added line: $line"
     else
         echo "Line already exists: $line"
     fi
 }
+# Function to clone repo, copy files, and clean up
+clone_and_copy() {
+    local repo="$1"
+    local branch="$2"
+    local source_path="${3:-.}"  # Default to root of repo if no source path specified
+    local dest_path="$4"
+    local tmp_dir="$(pwd)/tmp"
+
+    echo "Processing repo: $repo"
+    mkdir -p "$tmp_dir"
+    mkdir -p "$dest_path"
+
+    # Clone the repository
+    if [ -n "$branch" ]; then
+        git clone -b "$branch" "$repo" "$tmp_dir"
+    else
+        git clone "$repo" "$tmp_dir"
+    fi
+
+    # Ensure destination directory exists
+    mkdir -p "$(dirname "$dest_path")"
+
+    # Copy files
+    cp -rf "$tmp_dir/$source_path" "$dest_path"
+
+    # Clean up
+    rm -rf "$tmp_dir"
+    echo "Completed processing: $repo"
+}
+
 
 if [[ "$1" == 'allapps' ]]; then
-    echo "adding callflows updates"
-    #callflows
-    mkdir -p $(pwd)/tmp
-    git clone $GITHUBREPO/monster-ui-callflows-ng.git $(pwd)/tmp
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding callflows updates"
+    clone_and_copy "$GITHUBREPO/monster-ui-callflows-ng.git" "bugfix/newqueue" "src" "$(pwd)/"
 
-    echo "adding resources app"
-    #resources
-    mkdir -p $(pwd)/tmp/src/apps/resources
-    git clone $GITHUBREPO/monster-ui-resources.git $(pwd)/tmp/src/apps/resources
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding callcenter app"
+    clone_and_copy "$GITHUBREPO/monster-ui-callcenter.git" "bugfix/defaultscreen" "src" "$(pwd)/"
 
-    echo "adding rates app"
-    #rates
-    mkdir -p $(pwd)/tmp/src/apps/rates
-    git clone $GITHUBREPO/monster-ui-rates.git $(pwd)/tmp/src/apps/rates
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding whitelabel app"
+    clone_and_copy "$GITHUBREPO/monster-ui-whitelabel.git" "" "src" "$(pwd)/"
 
-    echo "adding callcenter app"
-    #callcenter
-    mkdir -p $(pwd)/tmp
-    git clone $GITHUBREPO/monster-ui-callcenter.git $(pwd)/tmp
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding addressbooks app"
+    clone_and_copy "$GITHUBREPO/monster-ui-addressbooks.git" "" "src" "$(pwd)/"
 
-    #echo "adding storagemgmt app"
-    ##storagemgmt (fails minify when building)
-    ## around the line for "storageManagerMakeConfig (storageKeyword, data, uuid) {"
-    #mkdir -p $(pwd)/tmp
-    #git clone $GITHUBREPO/monster-ui-storagemgmt.git $(pwd)/tmp
-    #/bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    #rm -rf $(pwd)/tmp
+    echo "Adding non-build apps"
 
-    echo "adding whitelabel app"
-    #whitelabel
-    mkdir -p $(pwd)/tmp
-    git clone $GITHUBREPO/monster-ui-whitelabel.git $(pwd)/tmp
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding resources app"
+    clone_and_copy "$GITHUBREPO/monster-ui-resources.git" "" "." "$(pwd)/src/apps/resources"
 
-    echo "adding addressbooks app"
-    #addressbooks
-    mkdir -p $(pwd)/tmp
-    git clone $GITHUBREPO/monster-ui-addressbooks.git $(pwd)/tmp
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding rates app"
+    clone_and_copy "$GITHUBREPO/monster-ui-rates.git" "" "." "$(pwd)/src/apps/rates"
 
-    echo "adding registrations app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/registrations
-    git clone $GITHUBREPO/monster-ui-registrations.git $(pwd)/tmp/src/apps/registrations
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding registrations app"
+    clone_and_copy "$GITHUBREPO/monster-ui-registrations.git" "" "." "$(pwd)/src/apps/registrations"
 
-    echo "adding voicemails app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/voicemails
-    git clone $GITHUBREPO/monster-ui-voicemails.git $(pwd)/tmp/src/apps/voicemails
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding voicemails app"
+    clone_and_copy "$GITHUBREPO/monster-ui-voicemails.git" "4.3" "." "$(pwd)/src/apps/voicemails"
 
-    echo "adding recordings app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/recordings
-    git clone $GITHUBREPO/monster-ui-recordings.git $(pwd)/tmp/src/apps/recordings
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding recordings app"
+    clone_and_copy "https://github.com/kazoo-classic/monster-ui-recordings.git" "" "." "$(pwd)/src/apps/recordings"
 
-    echo "adding SmartPBX app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/voip
-    git clone $GITHUBREPO/monster-ui-voip.git $(pwd)/tmp/src/apps/voip
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding SmartPBX app"
+    clone_and_copy "$GITHUBREPO/monster-ui-voip.git" "4.3" "." "$(pwd)/src/apps/voip"
 
-    echo "adding Accounts app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/accounts
-    git clone $GITHUBREPO/monster-ui-accounts.git $(pwd)/tmp/src/apps/accounts
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding Accounts app"
+    clone_and_copy "$GITHUBREPO/monster-ui-accounts.git" "4.3" "." "$(pwd)/src/apps/accounts"
 
-    echo "adding CSV-Onboarding app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/csv-onboarding
-    git clone $GITHUBREPO/monster-ui-csv-onboarding.git $(pwd)/tmp/src/apps/csv-onboarding
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding CSV-Onboarding app"
+    clone_and_copy "$GITHUBREPO/monster-ui-csv-onboarding.git" "4.3" "." "$(pwd)/src/apps/csv-onboarding"
 
-    echo "adding Fax app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/fax
-    git clone $GITHUBREPO/monster-ui-fax.git $(pwd)/tmp/src/apps/fax
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding Fax app"
+    clone_and_copy "$GITHUBREPO/monster-ui-fax.git" "4.3" "." "$(pwd)/src/apps/fax"
 
-    echo "adding Numbers app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/numbers
-    git clone $GITHUBREPO/monster-ui-numbers.git $(pwd)/tmp/src/apps/numbers
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding Numbers app"
+    clone_and_copy "$GITHUBREPO/monster-ui-numbers.git" "4.3" "." "$(pwd)/src/apps/numbers"
 
-    echo "adding PBXs app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/pbxs
-    git clone $GITHUBREPO/monster-ui-pbxs.git $(pwd)/tmp/src/apps/pbxs
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding PBXs app"
+    clone_and_copy "$GITHUBREPO/monster-ui-pbxs.git" "4.3" "." "$(pwd)/src/apps/pbxs"
 
-    echo "adding Webhooks app"
-    #registrations
-    mkdir -p $(pwd)/tmp/src/apps/webhooks
-    git clone $GITHUBREPO/monster-ui-webhooks.git $(pwd)/tmp/src/apps/webhooks
-    /bin/cp -rf $(pwd)/tmp/src $(pwd)/
-    rm -rf $(pwd)/tmp
+    echo "Adding Webhooks app"
+    clone_and_copy "$GITHUBREPO/monster-ui-webhooks.git" "4.3" "." "$(pwd)/src/apps/webhooks"
 
     for line in "${DATATABLES_PATHS[@]}"; do
         add_line_if_missing "$line" "$MAIN_JS"
@@ -194,4 +155,20 @@ docker cp "$CONTAINER_NAME:/var/www/distDev/." "$BUILD_DIR_DISTDEV/"
 echo "Removing temporary container '$CONTAINER_NAME'..."
 docker rm "$CONTAINER_NAME"
 
-echo "Build artifacts have been successfully copied to '$BUILD_DIR_DIST' and '$BUILD_DIR_DISTDEV'."
+if [[ "$1" == 'allapps' ]]; then
+
+    #storage management app fails to minify. But it can just be included without minification and it works.
+    echo "Adding storagemgmt app"
+    clone_and_copy "$GITHUBREPO/monster-ui-storagemgmt.git" "" "src/apps/storagemgmt" "$BUILD_DIR_DIST/apps/storagemgmt"
+
+    echo "Copying extra files"
+    cp "$BUILD_DIR_DISTDEV/js/vendor/bootstrap-tour.min.js" "$BUILD_DIR_DIST/bootstraptour.js"
+    cp "$BUILD_DIR_DISTDEV/js/vendor/datatables/jquery.dataTables.min.js" "$BUILD_DIR_DIST/datatables.net.js"
+    cp "$BUILD_DIR_DISTDEV/js/vendor/datatables/dataTables.bootstrap.min.js" "$BUILD_DIR_DIST/datatables.net-bs.js"
+    cp "$BUILD_DIR_DISTDEV/js/vendor/datatables/dataTables.buttons.min.js" "$BUILD_DIR_DIST/datatables.net-buttons.js"
+    cp "$BUILD_DIR_DISTDEV/js/vendor/datatables/buttons.html5.min.js" "$BUILD_DIR_DIST/datatables.net-buttons-html5.js"
+    cp "$BUILD_DIR_DISTDEV/js/vendor/datatables/buttons.bootstrap.min.js" "$BUILD_DIR_DIST/datatables.net-buttons-bootstrap.js"
+fi
+
+
+echo "Build artifacts have been successfully copied to '$BUILD_DIR_DIST'."
